@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>URL Shortener</h1>
+      <p>Shorten your long URLs with our simple service</p>
+    </header>
+    
+    <main>
+      <div class="url-form">
+        <input type="url" id="original-url" placeholder="Enter a long URL" required>
+        <button id="shorten-button">Shorten</button>
+      </div>
+      
+      <div class="result" id="result-container" style="display: none;">
+        <h3>Your shortened URL:</h3>
+        <div class="short-url-container">
+          <input type="text" id="shortened-url" readonly>
+          <button id="copy-button">Copy</button>
+        </div>
+        <p class="original-url" id="original-url-display"></p>
+      </div>
+      
+      <div class="loader" id="loader" style="display: none;">
+        <div class="spinner"></div>
+      </div>
+      
+      <div class="error" id="error-container" style="display: none;">
+        <p id="error-message"></p>
+      </div>
+    </main>
+    
+    <footer>
+      <p>Serverless URL Shortener - Built with AWS Lambda, API Gateway, and DynamoDB</p>
+    </footer>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>

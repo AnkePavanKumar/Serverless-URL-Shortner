@@ -1,0 +1,54 @@
+service: url-shortener
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
+    BASE_URL: ${self:custom.baseUrl}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+custom:
+  baseUrl: https://${self:custom.domainName}/${self:provider.stage}
+  domainName: ${opt:domain, 'your-api-id.execute-api.us-east-1.amazonaws.com'}
+
+functions:
+  createShortUrl:
+    handler: functions/createShortUrl.handler
+    events:
+      - http:
+          path: api/shorten
+          method: post
+          cors: true
+  redirectUrl:
+    handler: functions/redirectUrl.handler
+    events:
+      - http:
+          path: "id"
+          method: get
+
+resources:
+  Resources:
+    UrlsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
